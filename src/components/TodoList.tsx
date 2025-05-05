@@ -4,6 +4,7 @@ import TodoItem from './TodoItem';
 import { Status } from '../types';
 import AddTodo from './AddTodo';
 import EditTodo from './EditTodo';
+import FilterBar from './FilterBar';
 
 const initialTodos: Todo[] = [
     {
@@ -144,6 +145,8 @@ const TodoList = () => {
         setEditForm({ itemName: '', dueDate: '' });
     }, []);
 
+    const [selectedStatus, setSelectedStatus] = useState<Status | 'All'>('All');
+
     return (
         <div className="max-w-md mx-auto bg-white rounded-xl shadow-md p-4 space-y-4">
             <AddTodo
@@ -160,15 +163,25 @@ const TodoList = () => {
                 />
             )}
             <div className="space-y-2">
-                {todos.map((todo) => (
-                    <TodoItem
-                        key={todo.id}
-                        todo={todo}
-                        onStatusChange={() => handleStatusChange(todo.id)}
-                        onDelete={() => handleDelete(todo.id)}
-                        onEdit={() => handleEditStart(todo)}
-                    />
-                ))}
+                <FilterBar
+                    selectedStatus={selectedStatus}
+                    setSelectedStatus={setSelectedStatus}
+                />
+                {todos
+                    .filter(
+                        (todo) =>
+                            selectedStatus === 'All' ||
+                            todo.status === selectedStatus
+                    )
+                    .map((todo) => (
+                        <TodoItem
+                            key={todo.id}
+                            todo={todo}
+                            onStatusChange={() => handleStatusChange(todo.id)}
+                            onDelete={() => handleDelete(todo.id)}
+                            onEdit={() => handleEditStart(todo)}
+                        />
+                    ))}
             </div>
         </div>
     );
